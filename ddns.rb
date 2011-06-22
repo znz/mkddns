@@ -14,15 +14,15 @@ class DynamicDns
     @logger = logger
   end
 
-  def update(host, address, aaaa=false)
+  def update(host, address, aaaa=(/:/ =~ address))
     begin
       old_addresses = Resolv.getaddresses("#{host}.#{@domain}")
     rescue Resolv::ResolvError
       old_addresses = "(not found)"
     end
-    if old_addresses.include?(address)
+    if old_addresses.any?{|addr| /\A#{Regexp.quote(address)}\z/i =~ addr }
       @logger.info("ddns.update") { "host=#{host.inspect} address=#{address.inspect} (not update)" }
-      return
+      return false
     else
       @logger.info("ddns.update") { "host=#{host.inspect} address=#{address.inspect} old_addresses=#{old_addresses.inspect}" }
     end
@@ -37,11 +37,12 @@ class DynamicDns
     end
     nsupdate << "update add #{host}.#{@domain} #{TXT_TTL} IN TXT #{TXT_RECORD}"
     send(nsupdate)
+    true
   rescue Exception
     @logger.error("ddns.update") { $! }
   end
 
-  def delete(host, aaaa=false)
+  def delete(host)
     begin
       old_addresses = Resolv.getaddresses("#{host}.#{@domain}")
     rescue Resolv::ResolvError
@@ -50,11 +51,8 @@ class DynamicDns
     @logger.info("ddns.delete") { "host=#{host.inspect} old_addresses=#{old_addresses.inspect}" }
 
     nsupdate = []
-    if aaaa
-      nsupdate << "update delete #{host}.#{@domain} IN AAAA"
-    else
-      nsupdate << "update delete #{host}.#{@domain} IN A"
-    end
+    nsupdate << "update delete #{host}.#{@domain} IN A"
+    nsupdate << "update delete #{host}.#{@domain} IN AAAA"
     nsupdate << "update delete #{host}.#{@domain} IN TXT"
     send(nsupdate)
   rescue Exception
