@@ -1,3 +1,8 @@
+*.conf
+*.key
+*.private
+*.zone
 *~
 log/
+named.conf.*
 tmp/
