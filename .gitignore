@@ -1,8 +1,6 @@
-*.conf
-*.key
-*.private
-*.zone
 *~
+.ssh
+config/
 log/
-named.conf.*
+named/
 tmp/
