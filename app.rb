@@ -1,6 +1,6 @@
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'ddns'
-require 'plain_auth'
+require 'plain_db'
 
 helpers do
   include Rack::Utils
@@ -17,10 +17,10 @@ helpers do
   end
 
   def authorized?
-    @plain_auth ||= PlainAuth.new(ENV['CREDENTIALS_DIR'] || 'config/credentials')
+    @plain_db ||= PlainDb.new(ENV['CREDENTIALS_DIR'] || 'config/credentials')
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     @auth.provided? && @auth.basic? && @auth.credentials &&
-      @plain_auth.auth(*@auth.credentials)
+      @plain_db.auth(*@auth.credentials)
   end
 
   def get_ddns_of(domain)
@@ -45,8 +45,8 @@ end
 get '/update' do
   protected!
   user = @auth.username
-  domain = @plain_auth.domain(user)
+  domain = @plain_db.domain(user)
   update_ddns(user, domain, request.env['REMOTE_ADDR'])
-  @plain_auth.inc(user)
+  @plain_db.inc(user)
   "<p>'#{h(user)}.#{h(domain)}' set to '#{h(request.env['REMOTE_ADDR'])}'.</p>\n"
 end
