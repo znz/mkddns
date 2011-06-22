@@ -12,9 +12,23 @@ class PlainAuth
       @previous_error = 'invalid user'
       return false
     end
-    pass == File.read(File.join(@dir, user, 'pass')).chomp
+    pass == fetch(user, 'pass')
   rescue => e
     @previous_error = e
     return false
+  end
+
+  def domain(user, default_domain=nil)
+    @previous_error = nil
+    fetch(user, 'domain')
+  rescue => e
+    @previous_error = e
+    return default_domain
+  end
+
+  private
+
+  def fetch(user, attr)
+    File.read(File.join(@dir, user, attr)).chomp
   end
 end
