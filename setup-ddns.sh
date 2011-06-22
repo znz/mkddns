@@ -38,7 +38,7 @@ if [ ! -f "/var/cache/bind/$DOMAIN.zone" ]; then
     cat >"$DOMAIN.zone" <<EOF
 \$TTL	1d
 @	IN    SOA    ns.example.com. root.example.com. (
-	$(date +'%Y%m%d')01	; Serial
+	1		; Serial
 	1h		; Refresh
 	15m		; Retry
 	1w		; Expire
