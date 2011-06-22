@@ -62,4 +62,24 @@ class TestPlainAuth < Test::Unit::TestCase
     assert_equal 'ddns.example.com', auth.domain('not-found', 'ddns.example.com')
     assert_kind_of Errno::ENOENT, auth.previous_error
   end
+
+  def test_count
+    auth = plain_auth
+    assert_nil auth.previous_error
+    assert_equal 1, auth.inc('user')
+    assert_nil auth.previous_error
+    assert_equal 2, auth.inc('user')
+  ensure
+    path = auth.__send__(:path, 'user', 'count')
+    if File.exist?(path)
+      File.unlink(path)
+    end
+  end
+
+  def test_count_failed
+    auth = plain_auth
+    assert_nil auth.previous_error
+    assert_equal false, auth.inc('not-found')
+    assert_kind_of Errno::ENOENT, auth.previous_error
+  end
 end

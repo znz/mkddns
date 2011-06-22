@@ -26,9 +26,29 @@ class PlainAuth
     return default_domain
   end
 
+  def inc(user)
+    @previous_error = nil
+    count = fetch(user, 'count').to_i rescue 0
+    store(user, 'count', count+1)
+  rescue => e
+    @previous_error = e
+    return false
+  end
+
   private
 
+  def path(user, attr)
+    File.join(@dir, user, attr)
+  end
+
   def fetch(user, attr)
-    File.read(File.join(@dir, user, attr)).chomp
+    File.read(path(user, attr)).chomp
+  end
+
+  def store(user, attr, value)
+    File.open(path(user, attr), 'w') do |f|
+      f.puts value
+    end
+    value
   end
 end
