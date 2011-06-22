@@ -41,6 +41,26 @@ class DynamicDns
     @logger.error("ddns.update") { $! }
   end
 
+  def delete(host, aaaa=false)
+    begin
+      old_addresses = Resolv.getaddresses("#{host}.#{@domain}")
+    rescue Resolv::ResolvError
+      old_addresses = "(not found)"
+    end
+    @logger.info("ddns.delete") { "host=#{host.inspect} old_addresses=#{old_addresses.inspect}" }
+
+    nsupdate = []
+    if aaaa
+      nsupdate << "update delete #{host}.#{@domain} IN AAAA"
+    else
+      nsupdate << "update delete #{host}.#{@domain} IN A"
+    end
+    nsupdate << "update delete #{host}.#{@domain} IN TXT"
+    send(nsupdate)
+  rescue Exception
+    @logger.error("ddns.delete") { $! }
+  end
+
   private
 
   def send(nsupdate)

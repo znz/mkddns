@@ -22,4 +22,10 @@ class TestDynamicDns < Test::Unit::TestCase
     ddns.update('test', '192.168.0.1')
     assert_equal(['192.168.0.1'], Resolv.getaddresses('test.ddns.example.com'))
   end
+
+  def test_delete_ipv4
+    ddns = ddns_example_com
+    ddns.delete('test')
+    assert_equal([], Resolv.getaddresses('test.ddns.example.com'))
+  end
 end
