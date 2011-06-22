@@ -47,5 +47,6 @@ get '/update' do
   user = @auth.username
   domain = @plain_auth.domain(user)
   update_ddns(user, domain, request.env['REMOTE_ADDR'])
+  @plain_auth.inc(user)
   "<p>'#{h(user)}.#{h(domain)}' set to '#{h(request.env['REMOTE_ADDR'])}'.</p>\n"
 end
