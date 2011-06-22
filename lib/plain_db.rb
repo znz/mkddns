@@ -1,4 +1,4 @@
-class PlainAuth
+class PlainDb
   def initialize(credentials_dir)
     @dir = credentials_dir
     @previous_error = nil
