@@ -21,10 +21,10 @@ class DynamicDns
       old_addresses = "(not found)"
     end
     if old_addresses.any?{|addr| /\A#{Regexp.quote(address)}\z/i =~ addr }
-      @logger.info("ddns.update") { "host=#{host.inspect} address=#{address.inspect} (not update)" }
+      @logger.info("ddns.update") { "host=#{host.inspect} domain=#{@domain.inspect} address=#{address.inspect} (not update) old_addresses=#{old_addresses.inspect}" }
       return false
     else
-      @logger.info("ddns.update") { "host=#{host.inspect} address=#{address.inspect} old_addresses=#{old_addresses.inspect}" }
+      @logger.info("ddns.update") { "host=#{host.inspect} domain=#{@domain.inspect} address=#{address.inspect} old_addresses=#{old_addresses.inspect}" }
     end
 
     nsupdate = []
@@ -48,7 +48,7 @@ class DynamicDns
     rescue Resolv::ResolvError
       old_addresses = "(not found)"
     end
-    @logger.info("ddns.delete") { "host=#{host.inspect} old_addresses=#{old_addresses.inspect}" }
+    @logger.info("ddns.delete") { "host=#{host.inspect} domain=#{@domain.inspect} old_addresses=#{old_addresses.inspect}" }
 
     nsupdate = []
     nsupdate << "update delete #{host}.#{@domain} IN A"
@@ -80,8 +80,9 @@ class DynamicDns
         # child
         STDERR.reopen(STDOUT)
         argv = [NSUPDATE, "-k", @key_file]
+        @logger.debug("ddns.nsupdate") { argv }
         exec(*argv)
-        @logger.error("ddns.nsupdate") { "fail to exec" }
+        @logger.error("ddns.nsupdate") { "fail to exec: #{argv.inspect}" }
       end
     end
   end
