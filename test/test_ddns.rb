@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 require 'test/unit'
-$LOAD_PATH.push File.dirname(__FILE__)
+$LOAD_PATH.push File.expand_path('../../lib', __FILE__)
 require 'ddns'
 
 class TestDynamicDns < Test::Unit::TestCase
@@ -15,7 +15,7 @@ class TestDynamicDns < Test::Unit::TestCase
   end
 
   def ddns_example_com
-    key, = Dir.glob("K#{DOMAIN}.*.key")
+    key, = Dir.glob("named/K#{DOMAIN}.*.key")
     DynamicDns.new(DOMAIN, key, LOGGER)
   end
 
