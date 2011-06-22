@@ -1,0 +1,16 @@
+* README
+** Initial setup
+- Run ~sh -x ./bin/setup-ddns.sh ddns.example.com~
+- Some files used by bind9 :
+  - named/DOMAIN.key.conf :: Included from named.conf.DOMAIN.  When you move this file, edit named.conf.DOMAIN too.
+  - named/DOMAIN.zone :: Copy to /var/cache/bind/DOMAIN.zone as an initial zone file.
+  - named/name.conf.DOMAIN :: Include from your name.conf.
+
+** Run test
+- Run ~ruby test/test_ddns.rb -v~ when domain is 'ddns.example.com'.
+
+** Update via ssh
+- Add ssh public key to config/sshpubkeys/FQDN.pub (e.g. config/sshpubkeys/test.ddns.example.com.pub)
+- Run ~ruby bin/update-sshkeys.rb~
+- Merge ~.ssh/authorized_keys~ to your ddns account or set this directory as ddns account's home directory.
+- Run ~ssh -T ddns@your.ddns.server.example.com~ from ssh client machine. (-T option is required by no-pty)
