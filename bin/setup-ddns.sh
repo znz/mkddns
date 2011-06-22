@@ -6,6 +6,9 @@ if [ -z "$1" ]; then
 fi
 
 DOMAIN=$1
+DIR=$(dirname $(dirname "$0"))/named
+mkdir -p "$DIR"
+cd "$DIR"
 DIR=$(pwd)
 BASENAME=$(dnssec-keygen -a HMAC-MD5 -b 512 -n HOST "$DOMAIN")
 KEY=$(awk '/Key/{print $2}' "$BASENAME.private")
