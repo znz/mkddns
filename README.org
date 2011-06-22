@@ -8,6 +8,8 @@
 
 ** Run test
 - Run ~ruby test/test_ddns.rb -v~ when domain is 'ddns.example.com'.
+- Run ~bundle install~
+- Run ~ruby test/test_app.rb -v~ when domain is 'ddns.example.com'.
 
 ** Update via ssh
 - Add ssh public key to config/sshpubkeys/FQDN.pub (e.g. config/sshpubkeys/test.ddns.example.com.pub)
