@@ -12,10 +12,9 @@ class PlainAuth
       @previous_error = 'invalid user'
       return false
     end
-    pass == File.read(File.join(@dir, user)).chomp
+    pass == File.read(File.join(@dir, user, 'pass')).chomp
   rescue => e
     @previous_error = e
     return false
   end
-
 end
