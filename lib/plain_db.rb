@@ -1,6 +1,6 @@
 class PlainDb
-  def initialize(credentials_dir)
-    @dir = credentials_dir
+  def initialize(hosts_dir)
+    @dir = hosts_dir
     @previous_error = nil
   end
 
@@ -8,7 +8,7 @@ class PlainDb
 
   def auth(user, pass)
     @previous_error = nil
-    unless /\A[A-Za-z0-9\-]+\z/ =~ user
+    unless /\A[A-Za-z0-9.\-]+\z/ =~ user
       @previous_error = 'invalid user'
       return false
     end
@@ -18,12 +18,21 @@ class PlainDb
     return false
   end
 
-  def domain(user, default_domain=nil)
+  def fqdn(user)
     @previous_error = nil
-    fetch(user, 'domain')
+    path = File.join(@dir, user)
+    case
+    when File.symlink?(path)
+      return File.readlink(path)
+    when File.directory?(path)
+      return user
+    else
+      @previous_error = 'no such user'
+      return false
+    end
   rescue => e
     @previous_error = e
-    return default_domain
+    return nil
   end
 
   def inc(user)

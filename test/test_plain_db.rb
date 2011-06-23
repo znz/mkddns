@@ -5,13 +5,13 @@ require 'plain_db'
 
 class TestPlainDb < Test::Unit::TestCase
   def test_s_new
-    p_db = PlainDb.new('test/credentials')
+    p_db = PlainDb.new('test/hosts')
     assert_kind_of PlainDb, p_db
     assert_nil p_db.previous_error
   end
 
   def plain_db
-    PlainDb.new('test/credentials')
+    PlainDb.new('test/hosts')
   end
 
   def test_invalid_user
@@ -42,25 +42,25 @@ class TestPlainDb < Test::Unit::TestCase
     assert_nil p_db.previous_error
   end
 
-  def test_domain
+  def test_fqdn
     p_db = plain_db
     assert_nil p_db.previous_error
-    assert_equal 'ddns.example.com', p_db.domain('user')
+    assert_equal 'user.ddns.example.com', p_db.fqdn('user.ddns.example.com')
     assert_nil p_db.previous_error
   end
 
-  def test_domain_not_found
+  def test_fdqn_symlink
     p_db = plain_db
     assert_nil p_db.previous_error
-    assert_nil p_db.domain('not-found')
-    assert_kind_of Errno::ENOENT, p_db.previous_error
+    assert_equal 'user.ddns.example.com', p_db.fqdn('user')
+    assert_nil p_db.previous_error
   end
 
-  def test_default_domain
+  def test_fqdn_not_found
     p_db = plain_db
     assert_nil p_db.previous_error
-    assert_equal 'ddns.example.com', p_db.domain('not-found', 'ddns.example.com')
-    assert_kind_of Errno::ENOENT, p_db.previous_error
+    assert_equal false, p_db.fqdn('not-found')
+    assert_equal 'no such user', p_db.previous_error
   end
 
   def test_count
