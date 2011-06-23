@@ -39,7 +39,7 @@ zone "$DOMAIN" {
     };
 };
 EOF
-if [ ! -f "/var/cache/bind/$DOMAIN.zone" ]; then
+if [ ! -f "$DOMAIN.zone" ]; then
     cat >"$DOMAIN.zone" <<EOF
 \$TTL	1d
 @	IN    SOA    ns.example.com. root.example.com. (
