@@ -8,7 +8,7 @@ require 'logger'
 unless File.directory?('log')
   Dir.mkdir('log')
 end
-logger = Logger.new('log/update-ddns.log')
+logger = Logger.new('log/update-ddns.log', 'daily')
 logger.level = Logger::INFO
 
 error = proc do |msg|
