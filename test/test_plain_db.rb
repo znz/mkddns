@@ -35,10 +35,17 @@ class TestPlainDb < Test::Unit::TestCase
     assert_nil p_db.previous_error
   end
 
-  def test_ok
+  def test_ok_symlink
     p_db = plain_db
     assert_nil p_db.previous_error
     assert p_db.auth('user', 'ok')
+    assert_nil p_db.previous_error
+  end
+
+  def test_ok_fqdn
+    p_db = plain_db
+    assert_nil p_db.previous_error
+    assert p_db.auth('user.ddns.example.com', 'ok')
     assert_nil p_db.previous_error
   end
 
