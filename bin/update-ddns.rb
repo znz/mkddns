@@ -35,3 +35,4 @@ logger.info("update-ddns") { "ssh ipaddr=#{ipaddr.inspect}" }
 
 ddns = DynamicDns.new(domain, "config/named/#{domain}.key", logger)
 ddns.update(host, ipaddr)
+puts "'#{fqdn}' set to '#{ipaddr}'."
