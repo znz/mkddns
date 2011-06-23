@@ -12,6 +12,8 @@ cd "$DIR"
 DIR=$(pwd)
 BASENAME=$(dnssec-keygen -a HMAC-MD5 -b 512 -n HOST "$DOMAIN")
 KEY=$(awk '/Key/{print $2}' "$BASENAME.private")
+ln -s "$BASENAME.key" "$DOMAIN.key"
+ln -s "$BASENAME.private" "$DOMAIN.private"
 touch "$DOMAIN.key.conf"
 chmod 640 "$DOMAIN.key.conf"
 chgrp bind "$DOMAIN.key.conf" || :
