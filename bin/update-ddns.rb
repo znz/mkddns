@@ -33,6 +33,5 @@ end
 logger.debug("update-ddns") { "ssh client=#{ssh_client.inspect}" }
 logger.info("update-ddns") { "ssh ipaddr=#{ipaddr.inspect}" }
 
-key, = Dir.glob("named/K#{domain}.*.key")
-ddns = DynamicDns.new(domain, key, logger)
+ddns = DynamicDns.new(domain, "config/named/#{domain}.key", logger)
 ddns.update(host, ipaddr)
