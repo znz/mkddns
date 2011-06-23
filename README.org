@@ -22,7 +22,7 @@
 - Run ~ruby test/test_app.rb -v~ when domain is 'ddns.example.com'.
 
 ** Update via ssh
-- Add ssh public key to config/sshpubkeys/FQDN.pub (e.g. config/sshpubkeys/test.ddns.example.com.pub)
+- Add ssh public key to config/hosts/FQDN/some.pub (e.g. config/hosts/test.ddns.example.com/id_rsa.pub)
 - Run ~ruby bin/update-sshkeys.rb~
-- Merge ~.ssh/authorized_keys~ to your ddns account or set this directory as ddns account's home directory.
+- Copy or merge ~.ssh/authorized_keys~ to your ddns account or set this directory as ddns account's home directory.
 - Run ~ssh -T ddns@your.ddns.server.example.com~ from ssh client machine. (-T option is required by no-pty)
