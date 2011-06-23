@@ -17,21 +17,22 @@ helpers do
   end
 
   def authorized?
-    @plain_db ||= PlainDb.new(ENV['CREDENTIALS_DIR'] || 'config/credentials')
+    @plain_db ||= PlainDb.new(ENV['HOSTS_DIR'] || 'config/hosts')
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     @auth.provided? && @auth.basic? && @auth.credentials &&
       @plain_db.auth(*@auth.credentials)
   end
 
   def get_ddns_of(domain)
-    key, = Dir.glob("named/K#{domain}.*.key")
-    unless key
+    key = "config/named/#{domain}.key"
+    unless File.exist?(key)
       raise "domain not found: #{domain.inspect}"
     end
     DynamicDns.new(domain, key, logger)
   end
 
-  def update_ddns(host, domain, address)
+  def update_ddns(fqdn, address)
+    host, domain = fqdn.split('.', 2)
     @ddns ||= get_ddns_of(domain)
     @ddns.update(host, address)
   end
@@ -45,8 +46,8 @@ end
 get '/update' do
   protected!
   user = @auth.username
-  domain = @plain_db.domain(user)
-  update_ddns(user, domain, request.env['REMOTE_ADDR'])
+  fqdn = @plain_db.fqdn(user)
+  update_ddns(fqdn, request.env['REMOTE_ADDR'])
   @plain_db.inc(user)
-  "<p>'#{h(user)}.#{h(domain)}' set to '#{h(request.env['REMOTE_ADDR'])}'.</p>\n"
+  "<p>'#{h(fqdn)}' set to '#{h(request.env['REMOTE_ADDR'])}'.</p>\n"
 end

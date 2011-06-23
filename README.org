@@ -2,9 +2,17 @@
 ** Initial setup
 - Run ~sh -x ./bin/setup-ddns.sh ddns.example.com~
 - Some files used by bind9 :
-  - named/DOMAIN.key.conf :: Included from named.conf.DOMAIN.  When you move this file, edit named.conf.DOMAIN too.
-  - named/DOMAIN.zone :: Copy to /var/cache/bind/DOMAIN.zone as an initial zone file.
-  - named/name.conf.DOMAIN :: Include from your name.conf.
+  - config/named/DOMAIN.key.conf :: Included from named.conf.DOMAIN.  When you move this file, edit named.conf.DOMAIN too.
+  - config/named/DOMAIN.zone :: Copy to /var/cache/bind/DOMAIN.zone as an initial zone file.
+  - config/named/name.conf.DOMAIN :: Include from your name.conf.
+
+** Permissions
+- Client side files.  These files used by nsupdate command.
+  - config/named/KDOMAIN.*.{key,private} :: Readable from your ddns account only. (client's secret key)
+- Server side files.  You can remove these files from config/named after setup bind.
+  - config/named/DOMAIN.key.conf :: Readable from bind only.  (server's secret key)
+  - config/named/DOMAIN.zone :: An example initial zone file.  Set permissions as normal zone file.  You can remove after copy to /var/cache/bind/DOMAIN.zone.
+  - config/named/named.conf.DOMAIN :: An example named.conf file. Set permissions as normal named.conf file.
 
 ** Run test
 - Run ~ruby test/test_ddns.rb -v~ when domain is 'ddns.example.com'.
