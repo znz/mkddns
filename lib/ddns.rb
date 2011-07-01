@@ -7,6 +7,7 @@ class DynamicDns
   AAAA_TTL = "60"
   TXT_TTL = "3600"
   TXT_RECORD = '"v=spf1 +mx -all"'
+  RESOLVER = Resolv.new([Resolv::DNS.new(:nameserver => ['127.0.0.1'])])
 
   def initialize(domain, key_file, logger=Logger.new('log/ddns.log', 'daily'))
     @domain = domain
@@ -16,7 +17,7 @@ class DynamicDns
 
   def update(host, address, aaaa=(/:/ =~ address))
     begin
-      old_addresses = Resolv.getaddresses("#{host}.#{@domain}")
+      old_addresses = RESOLVER.getaddresses("#{host}.#{@domain}")
     rescue Resolv::ResolvError
       old_addresses = "(not found)"
     end
